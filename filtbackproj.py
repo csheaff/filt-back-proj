@@ -38,9 +38,24 @@ def getProj(img, theta):
 
     numAngles = len(theta)
     sinogram = np.zeros((img.size[0],numAngles))
+
+    plt.ion()
+    fig1, (ax1, ax2) = plt.subplots(1,2)
+    im1 = ax1.imshow(img, cmap='gray')
+    ax1.set_title('<-- Sum')
+    im2 = ax2.imshow(sinogram, extent=[theta[0],theta[-1], img.size[0]-1, 0],
+                     cmap='gray', aspect='auto')
+    ax2.set_title('Sinogram')
+    plt.show()
+    
     for n in range(numAngles):
         rotImgObj = img.rotate(90-theta[n], resample=Image.BICUBIC)
+        im1.set_data(rotImgObj)
         sinogram[:,n] = np.sum(rotImgObj, axis=0)
+        im2.set_data(Image.fromarray((sinogram-np.min(sinogram))/np.ptp(sinogram)*255))
+        fig1.canvas.draw()
+
+    plt.ioff()
     return sinogram
 
 def arange2(start, stop=None, step=1):
@@ -94,7 +109,7 @@ def backproject(sinogram, theta):
     X, Y = np.meshgrid(x, y)
 
     plt.ion()
-    fig, ax = plt.subplots()
+    fig2, ax = plt.subplots()
     im = plt.imshow(reconMatrix, cmap='gray')
 
     theta = theta*np.pi/180
@@ -111,7 +126,7 @@ def backproject(sinogram, theta):
         reconMatrix += projMatrix
         im.set_data(Image.fromarray((reconMatrix-np.min(reconMatrix))/np.ptp(reconMatrix)*255))
         ax.set_title('Theta = %.2f degrees' % (theta[n]*180/np.pi))
-        fig.canvas.draw()
+        fig2.canvas.draw()
          
     plt.close()
     plt.ioff()
@@ -141,7 +156,7 @@ if __name__ == '__main__':
     n0, n1 = myImg.size
     reconImg = reconImg.crop((c0, c1, c0+n0, c1+n1))
 
-    fig1, (ax1, ax2, ax3) = plt.subplots(1,3, figsize=(12,4))
+    fig3, (ax1, ax2, ax3) = plt.subplots(1,3, figsize=(12,4))
     ax1.imshow(myImg, cmap='gray')
     ax1.set_title('Original Image')
     ax2.imshow(reconImg, cmap='gray')
@@ -149,13 +164,13 @@ if __name__ == '__main__':
     ax3.imshow(ImageChops.difference(myImg, reconImg), cmap='gray') #note this currently doesn't work for imported images
     ax3.set_title('Error')
 
-    fig2, (ax1, ax2) = plt.subplots(1,2)
-    ax1.imshow(myImgPad, cmap='gray')
-    ax1.set_title('Padded Image')
-    ax2.imshow(mySino, extent=[theta[0],theta[-1], 0, mySino.shape[0]], cmap='gray', aspect='auto')
-    ax2.set_xlabel('Angle (deg)')
-    ax2.set_ylabel('Index')
-    ax2.set_title('Image Sinogram')
+    # fig2, (ax1, ax2) = plt.subplots(1,2)
+    # ax1.imshow(myImgPad, cmap='gray')
+    # ax1.set_title('Padded Image')
+    # ax2.imshow(mySino, extent=[theta[0],theta[-1], 0, mySino.shape[0]], cmap='gray', aspect='auto')
+    # ax2.set_xlabel('Angle (deg)')
+    # ax2.set_ylabel('Index')
+    # ax2.set_title('Image Sinogram')
 
     plt.show()
 
