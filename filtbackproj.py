@@ -39,15 +39,18 @@ def getProj(img, theta):
     numAngles = len(theta)
     sinogram = np.zeros((img.size[0],numAngles))
 
+    #set up plotting
     plt.ion()
     fig1, (ax1, ax2) = plt.subplots(1,2)
     im1 = ax1.imshow(img, cmap='gray')
     ax1.set_title('<-- Sum')
     im2 = ax2.imshow(sinogram, extent=[theta[0],theta[-1], img.size[0]-1, 0],
                      cmap='gray', aspect='auto')
+    ax2.set_xlabel('Angle (deg)')
     ax2.set_title('Sinogram')
     plt.show()
-    
+
+    #get projections an dplot
     for n in range(numAngles):
         rotImgObj = img.rotate(90-theta[n], resample=Image.BICUBIC)
         im1.set_data(rotImgObj)
@@ -136,11 +139,9 @@ def backproject(sinogram, theta):
 #def main():
 if __name__ == '__main__':
 
-
     #myImg = dummyImg(500,700)
     myImg = Image.open('SheppLogan.png').convert('L')
-    
-    
+        
     myImgPad, c0, c1 = padImage(myImg)  #PIL image object
     dTheta = 1
     theta = np.arange(0,181,dTheta)
@@ -163,15 +164,6 @@ if __name__ == '__main__':
     ax2.set_title('Backprojected Image')
     ax3.imshow(ImageChops.difference(myImg, reconImg), cmap='gray') #note this currently doesn't work for imported images
     ax3.set_title('Error')
-
-    # fig2, (ax1, ax2) = plt.subplots(1,2)
-    # ax1.imshow(myImgPad, cmap='gray')
-    # ax1.set_title('Padded Image')
-    # ax2.imshow(mySino, extent=[theta[0],theta[-1], 0, mySino.shape[0]], cmap='gray', aspect='auto')
-    # ax2.set_xlabel('Angle (deg)')
-    # ax2.set_ylabel('Index')
-    # ax2.set_title('Image Sinogram')
-
     plt.show()
 
 
