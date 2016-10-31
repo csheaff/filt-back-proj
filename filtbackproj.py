@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from PIL import Image
+from matplotlib import animation
+from PIL import Image, ImageChops
 from scipy.fftpack import fft, fftshift, ifft
 
 def dummyImg(size0, size1):
@@ -11,7 +12,7 @@ def dummyImg(size0, size1):
     a = round(size0/4)
     b = round(size1/4)
     M[a:size0-a,b:size1-b] = 255 #insert centered rectangle with dimensions 1/2 the size of the image
-    dumImg = Image.fromarray(M)  #create image object
+    dumImg = Image.fromarray(M.astype('uint8'))  #create image object
     return dumImg
 
 def padImage(img):
@@ -91,9 +92,14 @@ def backproject(sinogram, theta):
     x = np.arange(imageLen)-imageLen/2 #create coordinate system centered at (x,y = 0,0)
     y = x.copy()
     X, Y = np.meshgrid(x, y)
-    
+
+    plt.ion()
+    fig, ax = plt.subplots()
+    im = plt.imshow(reconMatrix, cmap='gray')
+
     theta = theta*np.pi/180
     numAngles = len(theta)
+
     for n in range(numAngles):
         Xrot = X*np.sin(theta[n])-Y*np.cos(theta[n]) #determine rotated x-coordinate about origin in mesh grid form
         XrotCor = np.round(Xrot+imageLen/2) #shift back to original image coordinates, round values to make indices
@@ -103,35 +109,45 @@ def backproject(sinogram, theta):
         s = sinogram[:,n] #get projection
         projMatrix[m0, m1] = s[XrotCor[m0, m1]]  #backproject in-bounds data
         reconMatrix += projMatrix
-
+        im.set_data(Image.fromarray((reconMatrix-np.min(reconMatrix))/np.ptp(reconMatrix)*255))
+        ax.set_title('Theta = %.2f degrees' % (theta[n]*180/np.pi))
+        fig.canvas.draw()
+         
+    plt.close()
+    plt.ioff()
     backprojArray = np.flipud(reconMatrix)
     return backprojArray
-        
+
 #def main():
 if __name__ == '__main__':
 
 
-    myImg = dummyImg(500,700)
-    #myImg = Image.open('SheppLoganHead.png')
+    #myImg = dummyImg(500,700)
+    myImg = Image.open('SheppLogan.png').convert('L')
     
-    myImgPad, c0, c1 = padImage(myImg) 
+    
+    myImgPad, c0, c1 = padImage(myImg)  #PIL image object
     dTheta = 1
     theta = np.arange(0,181,dTheta)
     print('Getting projections\n')
-    mySino = getProj(myImgPad, theta)
+    mySino = getProj(myImgPad, theta)  #numpy array
     print('Filtering\n')
-    filtSino = projFilter(mySino)
-    print('Performing backprojection')
-    recon = backproject(filtSino, theta)
+    filtSino = projFilter(mySino)  #numpy array
+    print('Performing backprojection')  
 
-    n0, n1 = myImg.size                 #Crop out padding. Note PIL image objects have coordinates swapped relative to numpy arrays
-    recon2 = recon[c1:c1+n1,c0:c0+n0]   #So 10x20 numpy array converted to an image object will have a size of 20x10
-                                        #However, when plotting image objects with imshow, the coordinates are treated appropriately.        
-    fig1, (ax1, ax2) = plt.subplots(1,2)
-    ax1.imshow(myImg)
+    recon = backproject(filtSino, theta)
+    recon2 = np.round((recon-np.min(recon))/np.ptp(recon)*255) #convert values to integers 0-255
+    reconImg = Image.fromarray(recon2.astype('uint8'))
+    n0, n1 = myImg.size
+    reconImg = reconImg.crop((c0, c1, c0+n0, c1+n1))
+
+    fig1, (ax1, ax2, ax3) = plt.subplots(1,3, figsize=(12,4))
+    ax1.imshow(myImg, cmap='gray')
     ax1.set_title('Original Image')
-    ax2.imshow(recon2, cmap='gray')
+    ax2.imshow(reconImg, cmap='gray')
     ax2.set_title('Backprojected Image')
+    ax3.imshow(ImageChops.difference(myImg, reconImg), cmap='gray') #note this currently doesn't work for imported images
+    ax3.set_title('Error')
 
     fig2, (ax1, ax2) = plt.subplots(1,2)
     ax1.imshow(myImgPad, cmap='gray')
