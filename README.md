@@ -6,3 +6,4 @@ https://www.clear.rice.edu/elec431/projects96/DSP/index.html
 
 This code does not explicitly use Radon transform functions. In doing so perhaps it can be clearer to the user what operations are actually taking place in the reconstruction process, as the acquisition of projections and the backprojection process is visualized projection-by-projection. Perhaps it also allows the freedom to tinker with said operations.
 
+![alt text](./figure_2.png)
