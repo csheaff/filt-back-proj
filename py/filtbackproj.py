@@ -1,6 +1,7 @@
 import numpy as np
+# import matplotlib
+# matplotlib.use('QT5Agg')
 import matplotlib.pyplot as plt
-from matplotlib import animation
 from PIL import Image, ImageChops
 from scipy.fftpack import fft, fftshift, ifft
 
@@ -57,6 +58,7 @@ def getProj(img, theta):
         sinogram[:,n] = np.sum(rotImgObj, axis=0)
         im2.set_data(Image.fromarray((sinogram-np.min(sinogram))/np.ptp(sinogram)*255))
         fig1.canvas.draw()
+        fig1.canvas.flush_events()
 
     plt.ioff()
     return sinogram
@@ -130,6 +132,7 @@ def backproject(sinogram, theta):
         im.set_data(Image.fromarray((reconMatrix-np.min(reconMatrix))/np.ptp(reconMatrix)*255))
         ax.set_title('Theta = %.2f degrees' % (theta[n]*180/np.pi))
         fig2.canvas.draw()
+        fig2.canvas.flush_events()
          
     plt.close()
     plt.ioff()
