@@ -1,6 +1,4 @@
 import numpy as np
-# import matplotlib
-# matplotlib.use('QT5Agg')
 import matplotlib.pyplot as plt
 from PIL import Image, ImageChops
 from scipy.fftpack import fft, fftshift, ifft
