@@ -4,6 +4,6 @@ This is Python code for a very basic filtered backprojection algorithm used in C
 
 https://www.clear.rice.edu/elec431/projects96/DSP/index.html
 
-This code does not explicitly use Radon transform functions. In doing so perhaps it can be clearer to the user what operations are actually taking place in the reconstruction process, as the acquisition of projections and the backprojection process is visualized projection-by-projection. Perhaps it also allows the freedom to tinker with said operations. The backprojection process was originally displayed projection-by-projection on Ubuntu 14.04LTS, but it doesn't appear to work properly on other machines. Probably need to look at graphical backend usages.
+This code does not explicitly use Radon transform functions. In doing so perhaps it can be clearer to the user what operations are actually taking place in the reconstruction process, as the acquisition of projections and the backprojection process is visualized projection-by-projection. Perhaps it also allows the freedom to tinker with said operations. 
 
 ![alt text](./figure_2.png)
