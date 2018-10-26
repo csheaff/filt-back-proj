@@ -29,6 +29,18 @@ void padImage(const Mat &src, Mat &dst){
     copyMakeBorder(src, dst, padsize1, padsize1, padsize2, padsize2, BORDER_CONSTANT, Scalar(255));
 }
 
+void getSinogram(const Mat &src, Mat &dst){
+    Point center = Point(src.cols/2, src.rows/2);
+    double angle = 45.0;
+    double scale = 1.0;
+    Mat rot_mat = getRotationMatrix2D(center, angle, scale);
+    Mat image_rot;
+    warpAffine(src, image_rot, rot_mat, src.size());
+
+    Mat proj;
+    reduce(image_rot, proj, 0, CV_REDUCE_SUM, CV_64FC1);
+    //cout << proj << endl;
+}
 
 int main(){
     string s ("/home/clay/Documents/code/projects/filt-back-proj/cpp/filtbackproj/SheppLogan.png");
@@ -41,14 +53,9 @@ int main(){
     Mat image_pad;
     padImage(image, image_pad);
 
-    Point center = Point(image_pad.cols/2, image_pad.rows/2);
-    double angle = 45.0;
-    double scale = 1.0;
-    Mat rot_mat = getRotationMatrix2D(center, angle, scale);
-    Mat image_rot;
-    warpAffine(image_pad, image_rot, rot_mat, image_pad.size());
-
-    imshow("Display window", image_rot);
+    Mat sinogram;
+    getSinogram(image_pad, sinogram);
+    //imshow("Display window", proj);
 
 
     waitKey(0);
