@@ -16,3 +16,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp
+
+INCLUDEPATH += /usr/include/opencv
+#INCLUDEPATH += /home/clay/anaconda3/envs/opencv/include/opencv2
+LIBS += -L/usr/lib
+LIBS += -lopencv_core
+LIBS += -lopencv_imgcodecs
+LIBS += -lopencv_imgproc
+LIBS += -lopencv_highgui
+
