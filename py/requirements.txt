@@ -6,7 +6,7 @@ matplotlib==1.5.3
 numpy==1.11.2
 pexpect==4.2.1
 pickleshare==0.7.4
-Pillow==8.1.1
+Pillow==8.2.0
 prompt-toolkit==1.0.8
 ptyprocess==0.5.1
 Pygments==2.7.4
