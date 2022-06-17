@@ -3,7 +3,7 @@ decorator==4.0.10
 ipython==5.1.0
 ipython-genutils==0.1.0
 matplotlib==1.5.3
-numpy==1.11.2
+numpy==1.21.0
 pexpect==4.2.1
 pickleshare==0.7.4
 Pillow==8.1.1
